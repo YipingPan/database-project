@@ -1,12 +1,14 @@
 <html>
   <head>
-    <title>Flask Intro - login page</title>
+    <title>Login</title>
+    <style>body{background-color: #99ccff;}</style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="static/bootstrap.min.css" rel="stylesheet" media="screen">
   </head>
   <body>
     <div class="container">
-      <h1>Please login</h1>
+      <h1>Welcome to Damon and Charlene's website.</h1>
+      <h2>Login here</h2>
       <br>
       <form action="" method="post">
         <input type="text" placeholder="Username" name="username" value="{{
@@ -15,9 +17,7 @@
           request.form.password }}">
         <input class="btn btn-default" type="submit" value="Login">
       </form>
-      {% if error %}
-        <p class="error"><strong>Error:</strong> {{ error }}
-      {% endif %}
     </div>
   </body>
 </html>
+
