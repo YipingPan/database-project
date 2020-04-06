@@ -23,13 +23,13 @@ app = Flask(__name__, template_folder=tmpl_dir)
 #
 # XXX: The URI should be in the format of: 
 #
-#     postgresql://USER:PASSWORD@35.243.220.243/proj1part2
+#     postgresql://USER:PASSWORD@35.231.103.173/proj1part2
 #
 # For example, if you had username gravano and password foobar, then the following line would be:
 #
-#     DATABASEURI = "postgresql://gravano:foobar@35.243.220.243/proj1part2"
+#     DATABASEURI = "postgresql://gravano:foobar@35.231.103.173/proj1part2"
 #
-DATABASEURI = "postgresql://yp2524:0118@35.243.220.243/proj1part2"
+DATABASEURI = "postgresql://yp2524:0118@35.231.103.173/proj1part2"
 
 
 #
