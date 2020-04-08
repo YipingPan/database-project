@@ -14,9 +14,10 @@ from sqlalchemy import *
 from sqlalchemy.pool import NullPool
 from flask import Flask, request, render_template, g, redirect, Response
 
-tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
+tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'HTML')
 app = Flask(__name__, template_folder=tmpl_dir)
 
+# server, database, webpage
 
 #
 # The following is a dummy URI that does not connect to a valid database. You will need to modify it to connect to your Part 2 database in order to use the data.
@@ -140,14 +141,15 @@ def index():
   #     <div>{{n}}</div>
   #     {% endfor %}
   #
-  context = dict(data = names, myprint = '=========this is my print !!!========')
-
+  context = dict(data = names, myprint = 'this is my print')
 
   #
   # render_template looks in the templates/ folder for files.
   # for example, the below file reads template/index.html
   #
-  return render_template("index.html", **context)
+  
+  #return render_template("index.html", **context)
+  return render_template("index.html")
 
 #
 # This is an example of a different path.  You can see it at:
@@ -157,24 +159,53 @@ def index():
 # Notice that the function name is another() rather than index()
 # The functions for each app.route need to have different names
 #
-@app.route('/another')
-def another():
-  return render_template("another.html")
+@app.route('/post')
+def post():
+  #context = dict(mynum = 1234555)
+  #return render_template("another.html", **context)
+  return render_template("post.html")
 
 
-# Example of adding new data to the database
-@app.route('/add', methods=['POST'])
-def add():
-  name = request.form['name']
-  g.conn.execute('INSERT INTO test(name) VALUES (%s)', name)
-  return redirect('/')
+@app.route('/sell')
+def sell():
+  return render_template("sell.html")
 
+@app.route('/cart')
+def cart():
+  return render_template("cart.html")
+
+@app.route('/profile')
+def profile():
+  return render_template("profile.html")
 
 @app.route('/login')
 def login():
-    abort(401)
-    this_is_never_executed()
+  return render_template("login.html")
 
+@app.route('/register')
+def register():
+  return render_template("register.html")
+
+
+
+# Example of adding new data to the database
+# use ctrl4/5 to comment/uncomment
+# =============================================================================
+# @app.route('/add', methods=['POST'])
+# def add():
+#   name = request.form['name']
+#   g.conn.execute('INSERT INTO test(name) VALUES (%s)', name)
+#   return render_template("another.html") #redirect('/')
+# =============================================================================
+
+# use ctrl4/5 to comment/uncomment
+# =============================================================================
+# @app.route('/login')
+# def login():
+#     abort(401)
+#     this_is_never_executed()
+# 
+# =============================================================================
 
 if __name__ == "__main__":
   import click
@@ -202,3 +233,7 @@ if __name__ == "__main__":
     app.run(host=HOST, port=PORT, debug=debug, threaded=threaded)
 
   run()
+
+
+
+
