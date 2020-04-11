@@ -14,3 +14,16 @@ https://www.w3schools.com/html/html_form_attributes.asp
 login/register system ( htmls + pythons)
 (use ‘session’ library to maintain 'logged in' state)
 https://codeshack.io/login-system-python-flask-mysql/#registeringuserswithpython 
+
+
+
+
+
+On VM:
+
+log in to the database:
+psql -U yp2524 -h 35.231.103.173 -d proj1part2
+
+
+check describe table:
+(psql) \d+ table
