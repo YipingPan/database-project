@@ -1,0 +1,16 @@
+1.conda command cheat sheet
+https://docs.conda.io/projects/conda/en/4.6.0/_downloads/52a95608c49671267e40c689e0bc00ca/conda-cheatsheet.pdf
+
+2.Git
+https://www.bitdegree.org/learn/git-commit-command
+
+3.HTML <input> type
+https://www.w3schools.com/html/html_form_input_types.asp
+
+4.HTML <input> attributes
+https://www.w3schools.com/html/html_form_attributes.asp
+
+5.A very clear example: 
+login/register system ( htmls + pythons)
+(use ‘session’ library to maintain 'logged in' state)
+https://codeshack.io/login-system-python-flask-mysql/#registeringuserswithpython 
