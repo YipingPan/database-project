@@ -165,6 +165,12 @@ def post():
   #return render_template("another.html", **context)
   return render_template("post.html")
 
+@app.route('/postinfo')
+def post():
+  #context = dict(mynum = 1234555)
+  #return render_template("another.html", **context)
+  return render_template("postinfo.html")
+
 
 @app.route('/sell')
 def sell():
