@@ -12,7 +12,8 @@ import os
   # accessible as a variable in index.html:
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
-from flask import Flask, request, render_template, g, redirect, Response
+from flask import Flask, request, render_template, g, redirect, Response \
+  , url_for, session
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'HTML')
 app = Flask(__name__, template_folder=tmpl_dir)
@@ -176,11 +177,59 @@ def cart():
 
 @app.route('/profile')
 def profile():
-  return render_template("profile.html")
+  # Check if user is loggedin
+  if 'loggedin' in session:
+  
+    query = """
+      SELECT *
+      FROM users
+      WHERE user_id = %s
+    """
+    cursor = g.conn.execute(query, (session['id']))
+    account = cursor.fetchone()
+    # Show the profile page with account info
+    return render_template('profile.html', account=account)
+    # User is not loggedin redirect to login page
+  return redirect('/login')
 
-@app.route('/login')
+@app.route('/login',methods=['GET','POST'])
 def login():
-  return render_template("login.html")
+  if 'loggedin' in session:
+    context = dict(msg = "You have already logged in.")
+  else:
+    context = dict(msg = "You haven't logged in.")
+  if request.method == 'POST':
+    entered_username = request.form['username']
+    entered_password = request.form['password']
+    query = """
+      SELECT l.username as username, u.user_id as user_id
+      FROM login as l, haslogin as h, users as u
+      WHERE l.username = %s
+      and l.password = %s
+      and l.username = h.username
+      and h.user_id = u.user_id
+    """
+    cursor = g.conn.execute(query,\
+                            (entered_username,entered_password))
+    account = cursor.fetchone()
+    if account:
+      session['loggedin'] = True
+      session['id'] = account['user_id']
+      session['username'] = account['username']
+      #return 'Logged in successfully!'
+      context['msg'] = 'Logged in successfully!'
+    else:
+      context['msg'] = 'Incorrect username/password!'
+  return render_template("login.html",**context)
+
+@app.route('/logout')
+def logout():
+    # Remove session data, this will log the user out
+   session.pop('loggedin', None)
+   session.pop('id', None)
+   session.pop('username', None)
+   # Redirect to login page
+   return redirect('/login')
 
 @app.route('/register')
 def register():
@@ -230,6 +279,7 @@ if __name__ == "__main__":
 
     HOST, PORT = host, port
     print("running on %s:%d" % (HOST, PORT))
+    app.secret_key = 'this is a sercret key'
     app.run(host=HOST, port=PORT, debug=debug, threaded=threaded)
 
   run()
