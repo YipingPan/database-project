@@ -14,6 +14,7 @@ from sqlalchemy import *
 from sqlalchemy.pool import NullPool
 from flask import Flask, request, render_template, g, redirect, Response \
   , url_for, session
+import random
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'HTML')
 app = Flask(__name__, template_folder=tmpl_dir)
@@ -231,9 +232,94 @@ def logout():
    # Redirect to login page
    return redirect('/login')
 
-@app.route('/register')
+@app.route('/register', methods = ['GET','POST'])
 def register():
-  return render_template("register.html")
+  msg = ''
+  if request.method == 'POST' :
+# =============================================================================
+#   \
+#     and 'username'   in request.form \
+#     and 'password'   in request.form \
+#     and 'email'      in request.form \
+#     and 'security_question'  in request.form \
+#     and 'answer'     in request.form \
+#     and 'first_name' in request.form \
+#     and 'last_name'  in request.form \
+#     and 'DOB'        in request.form \
+#     and 'phone'      in request.form \
+#     and 'address1'   in request.form \
+#     and 'address2'   in request.form \
+#     and 'city'       in request.form \
+#     and 'state'      in request.form \
+#     and 'zipcode'    in request.form:
+# =============================================================================
+          # check username exists or not:
+          username = request.form['username']
+
+          query = """
+            SELECT *
+            FROM login
+            WHERE username = %s
+          """
+          cursor = g.conn.execute(query, (username))
+          account = cursor.fetchone()
+          if account:
+            msg = 'Username already exists !'
+          else:
+            # prepared for inserting the new account
+              # for login table
+            password   = request.form['password']
+            email      = request.form['email']
+            security_question = request.form['security_question']
+            answer     = request.form['answer']
+              # for users table
+            first_name = request.form['first_name']
+            last_name  = request.form['last_name']
+            DOB        = request.form['DOB']
+            phone      = request.form['phone']
+            address1   = request.form['address1']
+            address2   = request.form['address2']
+            city       = request.form['city']
+            state      = request.form['state']
+            zipcode    = request.form['zipcode']
+            active     = 'y'
+              # generate user_id
+            id_exists = True
+            while id_exists:
+              new_user_id = str(random.randrange(10**11,10**12-1))
+              query = """
+                SELECT *
+                FROM haslogin
+                WHERE user_id = %s
+              """
+              cursor = g.conn.execute(query, new_user_id)
+              if not cursor.fetchone():
+                id_exists = False
+            user_id = new_user_id
+            
+            query = """
+              INSERT INTO login 
+              VALUES (%s,%s,%s,%s,%s)
+            """
+            g.conn.execute(query, \
+                           (username,email,password,security_question,answer))
+            query = """
+              INSERT INTO users 
+              VALUES (%s,%s,%s,%s,%s,  %s,%s,%s,%s,%s,%s)
+            """
+            g.conn.execute(query, \
+                           (user_id, first_name, last_name, DOB, phone, \
+                            address1, address2, city, state, zipcode, active))
+              
+            # warning: haslogin must be operated as the last table.
+            query = """
+              INSERT INTO haslogin
+              VALUES (%s,%s,NULL)
+            """
+            g.conn.execute(query, \
+                           (username,user_id))
+
+  return render_template("register.html",msg=msg)
 
 
 
