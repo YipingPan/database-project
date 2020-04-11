@@ -8,16 +8,28 @@
 
 
 <body>
-  <h1>Second-hand Furniture Market</h1>
-  <h2>SELL</h2>
+  <div style="background-color:lightblue">
+  <h2>Sell my item</h2>
+  <p>Enter all information about the item you want to sell and click the submit button when done.</p>
+</div>
 
-<p><a href="/">HOME</a></p>
-<p><a href="/post">POST</a></p>
-<p><a href="/sell">SELL</a></p>
-<p><a href="/cart">CART</a></p>
-<p><a href="/profile">PROFILE</a></p>
-<p><a href="/login">LOGIN</a></p>
-<p><a href="/register">REGISTER</a></p>
+<form action="/index.html">
+  <label for="id">Item-id:</label>
+  <input type="text" id="id" name="id"><br><br>
+  <label for="name">Name of item:</label>
+  <input type="text" id="name" name="name"><br><br>
+  <label for="image">Image:</label>
+  <input type="text" id="image" name="image"><br><br>
+  <label for="price">Original Price:</label>
+  <input type="number" id="price" name="price"><br><br>
+  <label for="price2">Selling Price:</label>
+  <input type="number" id="price2" name="price2"><br><br>
+  
+  <input type="submit" value="Submit">
+</form>
+
+<p><a href="/">BACK TO HOME</a></p>
+
 
 </body>
 
