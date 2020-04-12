@@ -163,234 +163,255 @@ def index():
 #
 @app.route('/post')
 def post():
- 
-  #cursor = g.conn.execute("SELECT post_id, post_comment, post_time, price, state FROM post")
-  cursor = g.conn.execute("SELECT item_id, name, picture_url, brand, description, category FROM item")
-  items = []
-  items = cursor.fetchall()
-  cursor.close()
-
-  context = dict(items=items)
-
-  return render_template("post.html", **context)
+  try:
+    #cursor = g.conn.execute("SELECT post_id, post_comment, post_time, price, state FROM post")
+    cursor = g.conn.execute("SELECT item_id, name, picture_url, brand, description, category FROM item")
+    items = []
+    items = cursor.fetchall()
+    cursor.close()
+  
+    context = dict(items=items)
+  
+    return render_template("post.html", **context)
+  except Exception as e:
+    print(e) # see error in the prompt
+    return render_template("post.html", msg='server error !')  
 
 @app.route('/postinfo')
 def postinfo():
-  cursor = g.conn.execute("SELECT post_id, post_comment, post_time, price, state FROM post")
-  posts = []
-  posts = cursor.fetchall()
-  cursor.close()
-
-  context = dict(posts=posts)
+  try:
+    cursor = g.conn.execute("SELECT post_id, post_comment, post_time, price, state FROM post")
+    posts = []
+    posts = cursor.fetchall()
+    cursor.close()
   
-  return render_template("postinfo.html", **context)
-
+    context = dict(posts=posts)
+    
+    return render_template("postinfo.html", **context)
+  except Exception as e:
+    print(e)
+    return render_template("postinfo.html", msg='server error !') 
 
 @app.route('/sell')
 def sell():
-  return render_template("sell.html")
+  try:
+    
+    
+    return render_template("sell.html")
+  except Exception as e:
+    print(e)
+    return render_template("sell.html", msg='server error !') 
 
 @app.route('/cart')
 def cart():
-  return render_template("cart.html")
+  try:
+    return render_template("cart.html")
+  except Exception as e:
+    print(e)
+    return render_template("cart.html", msg='server error !') 
 
 @app.route('/profile', methods=['GET','POST'])
 def profile():
-  # Check if user is loggedin
-  if 'loggedin' in session:
-    query0 = """
-      SELECT *
-      FROM users
-      WHERE user_id = %s
-    """
-    cursor = g.conn.execute(query0, (session['id']))
-    account = cursor.fetchone()
-    
-    if request.method == 'POST':
-      msg1 = ""
-      msg2 = ""
-      if 'attribute' in request.form and 'data' in request.form\
-        and request.form['attribute'] != "" and request.form['data'] != "":
-          attribute = request.form['attribute']
-          data = request.form['data']
-          if attribute == 'phone':
-            if len(data) != 10 : msg1 = "Phone number should be 10 digits!"
-          elif attribute == 'address1':
-            if len(data) > 50 : msg1 = "Address should be shorter than 50!"
-          elif attribute == 'address2':
-            if len(data) > 50 : msg1 = "Address should be shorter than 50!"
-          elif attribute == 'city':
-            if len(data) > 50 : msg1 = "City should be shorter than 50!"
-          elif attribute == 'state':
-            if len(data) > 20 : msg1 = "State should be shorter than 20!"
-          elif attribute == 'zipcode':
-            if len(data) != 5 : msg1 = "Zipcode should be 5 digits!"
-          if msg1 == "":
-            query = "UPDATE users SET " + attribute + " = %s WHERE user_id = %s"
-            print('Executing query: \n', query)
-            g.conn.execute(query,(data,session['id']))
-            msg1 = 'Attribute successfully updated !'
-            
-      if 'oldpassword' in request.form and 'newpassword' in request.form \
-        and request.form['oldpassword']!='' and request.form['newpassword']!='':
-        oldpassword = request.form['oldpassword']
-        newpassword = request.form['newpassword']
-        query = """
-          SELECT password
-          FROM login
-          WHERE username = %s
-        """
-        cursor = g.conn.execute(query, session['username'])
-        password = cursor.fetchone()['password']
-        if password != oldpassword or len(newpassword)>50:
-          msg2 = 'Wrong oldpassword OR newpassword too long'
-        else:
-          query = """
-            UPDATE login
-            SET password=%s
-            WHERE username=%s
-          """
-          g.conn.execute(query, (newpassword, session['username']))
-          msg2 = 'Password successfully updated'
-      # refetch the new account infomation
+  try:
+    # Check if user is loggedin
+    if 'loggedin' in session:
+      query0 = """
+        SELECT *
+        FROM users
+        WHERE user_id = %s
+      """
       cursor = g.conn.execute(query0, (session['id']))
       account = cursor.fetchone()
-      return render_template('profile.html', account=account,msg1=msg1,msg2=msg2)
-        
+      cursor.close()
       
-    # Show the profile page with account info
-    return render_template('profile.html', account=account)
-    # User is not loggedin redirect to login page
-  return redirect('/login')
-
-@app.route('/login',methods=['GET','POST'])
-def login():
-  if 'loggedin' in session:
-    context = dict(msg = "You have already logged in.")
-  else:
-    context = dict(msg = "You haven't logged in.")
-  if request.method == 'POST':
-    entered_username = request.form['username']
-    entered_password = request.form['password']
-    query = """
-      SELECT l.username as username, u.user_id as user_id
-      FROM login as l, haslogin as h, users as u
-      WHERE l.username = %s
-      and l.password = %s
-      and l.username = h.username
-      and h.user_id = u.user_id
-    """
-    cursor = g.conn.execute(query,\
-                            (entered_username,entered_password))
-    account = cursor.fetchone()
-    if account:
-      session['loggedin'] = True
-      session['id'] = account['user_id']
-      session['username'] = account['username']
-      #return 'Logged in successfully!'
-      context['msg'] = 'Logged in successfully!'
-    else:
-      context['msg'] = 'Incorrect username/password!'
-  return render_template("login.html",**context)
-
-@app.route('/logout')
-def logout():
-    # Remove session data, this will log the user out
-   session.pop('loggedin', None)
-   session.pop('id', None)
-   session.pop('username', None)
-   # Redirect to login page
-   return redirect('/login')
-
-@app.route('/register', methods = ['GET','POST'])
-def register():
-  msg = ''
-  if request.method == 'POST' :
-# =============================================================================
-#   \
-#     and 'username'   in request.form \
-#     and 'password'   in request.form \
-#     and 'email'      in request.form \
-#     and 'security_question'  in request.form \
-#     and 'answer'     in request.form \
-#     and 'first_name' in request.form \
-#     and 'last_name'  in request.form \
-#     and 'DOB'        in request.form \
-#     and 'phone'      in request.form \
-#     and 'address1'   in request.form \
-#     and 'address2'   in request.form \
-#     and 'city'       in request.form \
-#     and 'state'      in request.form \
-#     and 'zipcode'    in request.form:
-# =============================================================================
-          # check username exists or not:
-          username = request.form['username']
-
+      if request.method == 'POST':
+        msg1 = ""
+        msg2 = ""
+        if 'attribute' in request.form and 'data' in request.form\
+          and request.form['attribute'] != "" and request.form['data'] != "":
+            attribute = request.form['attribute']
+            data = request.form['data']
+            if attribute == 'phone':
+              if len(data) != 10 : msg1 = "Phone number should be 10 digits!"
+            elif attribute == 'address1':
+              if len(data) > 50 : msg1 = "Address should be shorter than 50!"
+            elif attribute == 'address2':
+              if len(data) > 50 : msg1 = "Address should be shorter than 50!"
+            elif attribute == 'city':
+              if len(data) > 50 : msg1 = "City should be shorter than 50!"
+            elif attribute == 'state':
+              if len(data) > 20 : msg1 = "State should be shorter than 20!"
+            elif attribute == 'zipcode':
+              if len(data) != 5 : msg1 = "Zipcode should be 5 digits!"
+            if msg1 == "":
+              query = "UPDATE users SET " + attribute + " = %s WHERE user_id = %s"
+              print('Executing query: \n', query)
+              g.conn.execute(query,(data,session['id']))
+              msg1 = 'Attribute successfully updated !'
+              
+        if 'oldpassword' in request.form and 'newpassword' in request.form \
+          and request.form['oldpassword']!='' and request.form['newpassword']!='':
+          oldpassword = request.form['oldpassword']
+          newpassword = request.form['newpassword']
           query = """
-            SELECT *
+            SELECT password
             FROM login
             WHERE username = %s
           """
-          cursor = g.conn.execute(query, (username))
-          account = cursor.fetchone()
-          
-          if account:
-            msg = 'Username already exists !'
+          cursor = g.conn.execute(query, session['username'])
+          password = cursor.fetchone()['password']
+          cursor.close()
+          if password != oldpassword or len(newpassword)>50:
+            msg2 = 'Wrong oldpassword OR newpassword too long'
           else:
-            # prepared for inserting the new account
-              # for login table
-            password   = request.form['password']
-            email      = request.form['email']
-            security_question = request.form['security_question']
-            answer     = request.form['answer']
-              # for users table
-            first_name = request.form['first_name']
-            last_name  = request.form['last_name']
-            DOB        = request.form['DOB']
-            phone      = request.form['phone']
-            address1   = request.form['address1']
-            address2   = request.form['address2']
-            city       = request.form['city']
-            state      = request.form['state']
-            zipcode    = request.form['zipcode']
-            active     = 'y'
-              # generate user_id
-            id_exists = True
-            while id_exists:
-              new_user_id = str(random.randrange(10**11,10**12-1))
-              query = """
-                SELECT *
-                FROM haslogin
-                WHERE user_id = %s
-              """
-              cursor = g.conn.execute(query, new_user_id)
-              if not cursor.fetchone():
-                id_exists = False
-            user_id = new_user_id
-            
             query = """
-              INSERT INTO login 
-              VALUES (%s,%s,%s,%s,%s)
+              UPDATE login
+              SET password=%s
+              WHERE username=%s
             """
-            g.conn.execute(query, \
-                           (username,email,password,security_question,answer))
-            query = """
-              INSERT INTO users 
-              VALUES (%s,%s,%s,%s,%s,  %s,%s,%s,%s,%s,%s)
-            """
-            g.conn.execute(query, \
-                           (user_id, first_name, last_name, DOB, phone, \
-                            address1, address2, city, state, zipcode, active))
-              
-            # warning: haslogin must be operated as the last table.
-            query = """
-              INSERT INTO haslogin
-              VALUES (%s,%s,NULL)
-            """
-            g.conn.execute(query, \
-                           (username,user_id))
+            g.conn.execute(query, (newpassword, session['username']))
+            msg2 = 'Password successfully updated'
+        # refetch the new account infomation
+        cursor = g.conn.execute(query0, (session['id']))
+        account = cursor.fetchone()
+        cursor.close()
+        return render_template('profile.html', account=account,msg1=msg1,msg2=msg2)
+          
+        
+      # Show the profile page with account info
+      return render_template('profile.html', account=account)
+      # User is not loggedin redirect to login page
+    return redirect('/login')
+  except Exception as e:
+    print(e)
+    return render_template("profile.html", msg='server error !')
 
-  return render_template("register.html",msg=msg)
+@app.route('/login',methods=['GET','POST'])
+def login():
+  try:
+    if 'loggedin' in session:
+      context = dict(msg = "You have already logged in.")
+    else:
+      context = dict(msg = "You haven't logged in.")
+    if request.method == 'POST':
+      entered_username = request.form['username']
+      entered_password = request.form['password']
+      query = """
+        SELECT l.username as username, u.user_id as user_id
+        FROM login as l, haslogin as h, users as u
+        WHERE l.username = %s
+        and l.password = %s
+        and l.username = h.username
+        and h.user_id = u.user_id
+      """
+      cursor = g.conn.execute(query,\
+                              (entered_username,entered_password))
+      account = cursor.fetchone()
+      cursor.close()
+      if account:
+        session['loggedin'] = True
+        session['id'] = account['user_id']
+        session['username'] = account['username']
+        #return 'Logged in successfully!'
+        context['msg'] = 'Logged in successfully!'
+      else:
+        context['msg'] = 'Incorrect username/password!'
+    return render_template("login.html",**context)
+  except Exception as e:
+    print(e)
+    return render_template("login.html", msg='server error !')
+
+@app.route('/logout')
+def logout():
+  try:
+    # Remove session data, this will log the user out
+    session.pop('loggedin', None)
+    session.pop('id', None)
+    session.pop('username', None)
+    # Redirect to login page
+    return redirect('/login')
+  except Exception as e:
+    print(e)
+    return render_template("login.html", msg='server error !')
+
+@app.route('/register', methods = ['GET','POST'])
+def register():
+  try:
+    msg = ''
+    if request.method == 'POST' :
+            # check username exists or not:
+            username = request.form['username']
+  
+            query = """
+              SELECT *
+              FROM login
+              WHERE username = %s
+            """
+            cursor = g.conn.execute(query, (username))
+            account = cursor.fetchone()
+            cursor.close()
+            
+            if account:
+              msg = 'Username already exists !'
+            else:
+              # prepared for inserting the new account
+                # for login table
+              password   = request.form['password']
+              email      = request.form['email']
+              security_question = request.form['security_question']
+              answer     = request.form['answer']
+                # for users table
+              first_name = request.form['first_name']
+              last_name  = request.form['last_name']
+              DOB        = request.form['DOB']
+              phone      = request.form['phone']
+              address1   = request.form['address1']
+              address2   = request.form['address2']
+              city       = request.form['city']
+              state      = request.form['state']
+              zipcode    = request.form['zipcode']
+              active     = 'y'
+                # generate user_id
+              id_exists = True
+              while id_exists:
+                new_user_id = str(random.randrange(10**11,10**12-1))
+                query = """
+                  SELECT *
+                  FROM haslogin
+                  WHERE user_id = %s
+                """
+                cursor = g.conn.execute(query, new_user_id)
+                if not cursor.fetchone():
+                  id_exists = False
+              cursor.close()
+              user_id = new_user_id
+              
+              query = """
+                INSERT INTO login 
+                VALUES (%s,%s,%s,%s,%s)
+              """
+              g.conn.execute(query, \
+                             (username,email,password,security_question,answer))
+              query = """
+                INSERT INTO users 
+                VALUES (%s,%s,%s,%s,%s,  %s,%s,%s,%s,%s,%s)
+              """
+              g.conn.execute(query, \
+                             (user_id, first_name, last_name, DOB, phone, \
+                              address1, address2, city, state, zipcode, active))
+                
+              # warning: haslogin must be operated as the last table.
+              query = """
+                INSERT INTO haslogin
+                VALUES (%s,%s,NULL)
+              """
+              g.conn.execute(query, \
+                             (username,user_id))
+  
+    return render_template("register.html",msg=msg)
+  except Exception as e:
+    print(e)
+    return render_template("register.html", msg='server error !')
 
 
 
