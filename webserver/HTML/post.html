@@ -9,16 +9,16 @@
 <body>
 <div style="background-color:lightblue">
   <h1>Second-hand Furniture Market</h1>
-  <p>Here you can view the all posts. To see more details about a specific post, enter its id at the bottom of the page.</p>
+  <p>Here you can view the all items that have been posted. To see more details about a specific post, enter its id at the bottom of the page. **Fix cant get inner join to display</p>
 </div>
 
 <div style="width:1000px;height:300px;line-height:2em;overflow:scroll;padding:5px;">
 <table>
-<thead><tr><th>Post_id</th><th>Post_comment</th></tr></thead>
+<thead><tr><th>Post_id</th><th>Item_id</th><th>Name</th><th>Image</th><th>Brand</th><th>Description</th><th>Category</th></tr></thead>
 <tbody>
-{% for n in posts %}
+{% for item_id, name, picture_url, brand, description, category in items %}
     
-<tr><td>{{n}}</td><td>Description1</td></tr>
+<tr><td>Not working</td><td>{{item_id}}</td><td>{{name}}</td><td>{{picture_url}}</td><td>{{brand}}</td><td>{{description}}</td><td>{{category}}</td></tr>
 {% endfor %}
 </tbody>
 </table>
@@ -26,11 +26,7 @@
 </div>
 
 
-
-  
-
-
-  <form method="POST" action="/postinfo">
+<form method="POST" action="/postinfo">
 <p>Enter post-id: <input type="text" name="name"> <input type="submit" value="View details"></p>
 </form>
 

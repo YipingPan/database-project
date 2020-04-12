@@ -164,20 +164,26 @@ def index():
 @app.route('/post')
 def post():
  
-  cursor = g.conn.execute("SELECT post_id FROM post")
-  posts = []
-  posts = cursor.fetchall()
+  #cursor = g.conn.execute("SELECT post_id, post_comment, post_time, price, state FROM post")
+  cursor = g.conn.execute("SELECT item_id, name, picture_url, brand, description, category FROM item")
+  items = []
+  items = cursor.fetchall()
   cursor.close()
 
-  context = dict(posts=posts)
+  context = dict(items=items)
 
   return render_template("post.html", **context)
 
 @app.route('/postinfo')
 def postinfo():
-	
+  cursor = g.conn.execute("SELECT post_id, post_comment, post_time, price, state FROM post")
+  posts = []
+  posts = cursor.fetchall()
+  cursor.close()
+
+  context = dict(posts=posts)
   
-  return render_template("postinfo.html")
+  return render_template("postinfo.html", **context)
 
 
 @app.route('/sell')

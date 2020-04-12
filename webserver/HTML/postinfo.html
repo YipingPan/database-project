@@ -11,7 +11,15 @@
   <h1>Second-hand Furniture Market</h1>
 
 </div>
-  
+  <table>
+<thead><tr><th>Post_id</th><th>Post_comment</th><th>Time_posted</th><th>Price</th><th>State</th></tr></thead>
+<tbody>
+{% for post_id, comment, time, price, state in posts %}
+    
+<tr><td>{{post_id}}</td><td>{{comment}}</td><td>{{time}}</td><td>{{price}}</td><td>{{state}}</td></tr>
+{% endfor %}
+</tbody>
+</table>
 
 
   <form method="POST" action="/cart">
