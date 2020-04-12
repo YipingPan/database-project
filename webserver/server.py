@@ -163,14 +163,26 @@ def index():
 #
 @app.route('/post')
 def post():
-  #context = dict(mynum = 1234555)
-  #return render_template("another.html", **context)
+  query = """	SELECT *
+                FROM post
+              """
+  cursor = g.conn.execute(query)
+  data = cursor.fetchall()
+  print data
+  cursor.close()
   return render_template("post.html")
 
 @app.route('/postinfo')
-def post():
-  #context = dict(mynum = 1234555)
-  #return render_template("another.html", **context)
+def postinfo():
+	query = """	SELECT *
+                FROM item
+                WHERE post-id=
+              """
+    cursor = g.conn.execute(query)
+  data = cursor.fetchone()
+  print data
+  cursor.close()
+  
   return render_template("postinfo.html")
 
 
