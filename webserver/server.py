@@ -169,9 +169,8 @@ def post():
     items = []
     items = cursor.fetchall()
     cursor.close()
-  
+    
     context = dict(items=items)
-  
     return render_template("post.html", **context)
   except Exception as e:
     print(e) # see error in the prompt
@@ -192,6 +191,8 @@ def postinfo():
     print(e)
     return render_template("postinfo.html", msg='server error !') 
 
+
+
 @app.route('/sell')
 def sell():
   try:
@@ -202,10 +203,71 @@ def sell():
     print(e)
     return render_template("sell.html", msg='server error !') 
 
+# These should be placed in post.html or postinfo.html somewhere:
+#   <form method="POST" action="/add">
+#   <input type="text" name="item_id">
+#   <input type="submit" value="Add"></p>
+@app.route('/add', methods=['POST'])
+def add_to_cart():
+  try:
+    if 'loggedin' not in session:
+      return render_template('login.html',msg='Please log in !')
+    item_id = request.form['item_id']
+    query = """
+      SELECT item_id, name, picture_url, brand, description, category
+      FROM item
+      WHERE item_id = %s
+    """
+    cursor = g.conn.execute(query,item_id)
+    newitem = cursor.fetchone()
+    
+    #####  following steps are extremely important/strict to revise 'session';
+    ##### to use session['itemsarray'], must write like this instead of 'context = dict(items=session['itemsarray'])'
+    ##### tuples = [tuple(x.values()) for x in session['itemsarray']]
+    ##### context = dict(items=tuples)
+    newitem = dict(newitem) 
+    itemsarray = session['itemsarray']
+    itemsarray.append(newitem)
+    cursor.close()
+    session['itemsarray'] = itemsarray
+    #####
+    
+    print(newitem)
+    print(itemsarray)
+    print(session['itemsarray'])
+    print(session)
+    return redirect('/post')
+  except Exception as e:
+    print(e)
+    return redirect('/post')
+
+# These are placed in cart.html:
+#   <form method="POST" action="/clear">
+#   <input type="submit" value="Clear cart"></p>
+@app.route('/clear', methods=['POST'])
+def clear_cart():
+  try:
+    # if 'clear cart' button is submitted
+    if request.method == 'POST':
+      session['itemsarray'] = []
+      return render_template('cart.html')   
+  except Exception as e:
+    print(e)
+    return redirect('/cart')   
+
 @app.route('/cart')
 def cart():
   try:
-    return render_template("cart.html")
+    if 'loggedin' not in session:
+      return render_template('login.html',msg='Please log in !')
+    print(session['itemsarray'])
+    if session['itemsarray'] == []:
+      return render_template("cart.html", msg='Your cart is empty')
+    else:
+      tuples = [tuple(x.values()) for x in session['itemsarray']]
+      context = dict(items=tuples)
+      print(session['itemsarray'])
+      return render_template("cart.html", **context)
   except Exception as e:
     print(e)
     return render_template("cart.html", msg='server error !') 
@@ -312,6 +374,9 @@ def login():
         session['loggedin'] = True
         session['id'] = account['user_id']
         session['username'] = account['username']
+        session['itemsarray'] = []
+        session.modified = True
+        print(session)
         #return 'Logged in successfully!'
         context['msg'] = 'Logged in successfully!'
       else:

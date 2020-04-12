@@ -19,6 +19,28 @@
 <p><a href="/login">LOGIN</a></p>
 <p><a href="/register">REGISTER</a></p>
 
+<div style="width:1000px;height:300px;line-height:2em;overflow:scroll;padding:5px;">
+<table>
+<thead><tr><th>Item_id</th><th>Name</th><th>Image</th><th>Brand</th><th>Description</th><th>Category</th></tr></thead>
+<tbody>
+
+{% for item_id, name, picture_url, brand, description, category in items %}
+<tr><td>{{item_id}}</td><td>{{name}}</td><td>{{picture_url}}</td><td>{{brand}}</td><td>{{description}}</td><td>{{category}}</td></tr>
+{% endfor %}
+
+</tbody>
+</table>    
+
+</div>
+
+<div>
+{{msg}}
+</div>
+
+<div>
+ <form method="POST" action="/clear">
+ <input type="submit" value="Clear cart"></p>
+</div>
 </body>
 
 
