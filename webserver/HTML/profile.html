@@ -63,6 +63,33 @@
 </div>
 <br>
 <br>
+<div>
+ <form action='/profile' method='post'>
+ <div>
+  (optional) I want to update
+  <input list="attribute" placeholder="select the field you want to update" name="attribute">
+  <datalist id="attribute">
+    <option value="phone">
+    <option value="address1">
+    <option value="address2">
+    <option value="city">
+    <option value="state">
+    <option value="zipcode">
+  </datalist>
+  To
+  <input type='text' placeholder='new data' name='data'>
+  </div>
+  <div>
+   (optional) I want to change password: 
+   <input type="password" placeholder='old password here' name='oldpassword'> 
+   <input type="password" placeholder='new password here' name='newpassword'> <br>
+  <div>
+
+   <input type="submit"  value="Save change">
+ </form>
+ <h3>{{msg1}}</h3>
+ <h3>{{msg2}}</h3>
+</div>
 <br>
 <br>
 

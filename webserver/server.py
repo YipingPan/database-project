@@ -194,18 +194,70 @@ def sell():
 def cart():
   return render_template("cart.html")
 
-@app.route('/profile')
+@app.route('/profile', methods=['GET','POST'])
 def profile():
   # Check if user is loggedin
   if 'loggedin' in session:
-  
-    query = """
+    query0 = """
       SELECT *
       FROM users
       WHERE user_id = %s
     """
-    cursor = g.conn.execute(query, (session['id']))
+    cursor = g.conn.execute(query0, (session['id']))
     account = cursor.fetchone()
+    
+    if request.method == 'POST':
+      msg1 = ""
+      msg2 = ""
+      if 'attribute' in request.form and 'data' in request.form\
+        and request.form['attribute'] != "" and request.form['data'] != "":
+          attribute = request.form['attribute']
+          data = request.form['data']
+          if attribute == 'phone':
+            if len(data) != 10 : msg1 = "Phone number should be 10 digits!"
+          elif attribute == 'address1':
+            if len(data) > 50 : msg1 = "Address should be shorter than 50!"
+          elif attribute == 'address2':
+            if len(data) > 50 : msg1 = "Address should be shorter than 50!"
+          elif attribute == 'city':
+            if len(data) > 50 : msg1 = "City should be shorter than 50!"
+          elif attribute == 'state':
+            if len(data) > 20 : msg1 = "State should be shorter than 20!"
+          elif attribute == 'zipcode':
+            if len(data) != 5 : msg1 = "Zipcode should be 5 digits!"
+          if msg1 == "":
+            query = "UPDATE users SET " + attribute + " = %s WHERE user_id = %s"
+            print('Executing query: \n', query)
+            g.conn.execute(query,(data,session['id']))
+            msg1 = 'Attribute successfully updated !'
+            
+      if 'oldpassword' in request.form and 'newpassword' in request.form \
+        and request.form['oldpassword']!='' and request.form['newpassword']!='':
+        oldpassword = request.form['oldpassword']
+        newpassword = request.form['newpassword']
+        query = """
+          SELECT password
+          FROM login
+          WHERE username = %s
+        """
+        cursor = g.conn.execute(query, session['username'])
+        password = cursor.fetchone()['password']
+        if password != oldpassword or len(newpassword)>50:
+          msg2 = 'Wrong oldpassword OR newpassword too long'
+        else:
+          query = """
+            UPDATE login
+            SET password=%s
+            WHERE username=%s
+          """
+          g.conn.execute(query, (newpassword, session['username']))
+          msg2 = 'Password successfully updated'
+      # refetch the new account infomation
+      cursor = g.conn.execute(query0, (session['id']))
+      account = cursor.fetchone()
+      return render_template('profile.html', account=account,msg1=msg1,msg2=msg2)
+        
+      
     # Show the profile page with account info
     return render_template('profile.html', account=account)
     # User is not loggedin redirect to login page
@@ -281,6 +333,7 @@ def register():
           """
           cursor = g.conn.execute(query, (username))
           account = cursor.fetchone()
+          
           if account:
             msg = 'Username already exists !'
           else:
