@@ -12,13 +12,12 @@
       <p><a href="/register">REGISTER</a></p>
       <h2>Login here</h2>
       <br>
-      <form action="" method="post">
-        <input type="text" placeholder="Username" name="username" value="{{
-          request.form.username }}">
-         <input type="password" placeholder="Password" name="password" value="{{
-          request.form.password }}">
-        <input class="btn btn-default" type="submit" value="Login">
+      <form action="/login" method="post">
+        <input type="text" placeholder="Username" name="username" >
+        <input type="password" placeholder="Password" name="password">
+        <input  type="submit" value="Login">
       </form>
+      <h2>{{msg}}</h2>
     </div>
   </body>
 </html>

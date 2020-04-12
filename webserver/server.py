@@ -12,7 +12,9 @@ import os
   # accessible as a variable in index.html:
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
-from flask import Flask, request, render_template, g, redirect, Response
+from flask import Flask, request, render_template, g, redirect, Response \
+  , url_for, session
+import random
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'HTML')
 app = Flask(__name__, template_folder=tmpl_dir)
@@ -182,15 +184,148 @@ def cart():
 
 @app.route('/profile')
 def profile():
-  return render_template("profile.html")
+  # Check if user is loggedin
+  if 'loggedin' in session:
+  
+    query = """
+      SELECT *
+      FROM users
+      WHERE user_id = %s
+    """
+    cursor = g.conn.execute(query, (session['id']))
+    account = cursor.fetchone()
+    # Show the profile page with account info
+    return render_template('profile.html', account=account)
+    # User is not loggedin redirect to login page
+  return redirect('/login')
 
-@app.route('/login')
+@app.route('/login',methods=['GET','POST'])
 def login():
-  return render_template("login.html")
+  if 'loggedin' in session:
+    context = dict(msg = "You have already logged in.")
+  else:
+    context = dict(msg = "You haven't logged in.")
+  if request.method == 'POST':
+    entered_username = request.form['username']
+    entered_password = request.form['password']
+    query = """
+      SELECT l.username as username, u.user_id as user_id
+      FROM login as l, haslogin as h, users as u
+      WHERE l.username = %s
+      and l.password = %s
+      and l.username = h.username
+      and h.user_id = u.user_id
+    """
+    cursor = g.conn.execute(query,\
+                            (entered_username,entered_password))
+    account = cursor.fetchone()
+    if account:
+      session['loggedin'] = True
+      session['id'] = account['user_id']
+      session['username'] = account['username']
+      #return 'Logged in successfully!'
+      context['msg'] = 'Logged in successfully!'
+    else:
+      context['msg'] = 'Incorrect username/password!'
+  return render_template("login.html",**context)
 
-@app.route('/register')
+@app.route('/logout')
+def logout():
+    # Remove session data, this will log the user out
+   session.pop('loggedin', None)
+   session.pop('id', None)
+   session.pop('username', None)
+   # Redirect to login page
+   return redirect('/login')
+
+@app.route('/register', methods = ['GET','POST'])
 def register():
-  return render_template("register.html")
+  msg = ''
+  if request.method == 'POST' :
+# =============================================================================
+#   \
+#     and 'username'   in request.form \
+#     and 'password'   in request.form \
+#     and 'email'      in request.form \
+#     and 'security_question'  in request.form \
+#     and 'answer'     in request.form \
+#     and 'first_name' in request.form \
+#     and 'last_name'  in request.form \
+#     and 'DOB'        in request.form \
+#     and 'phone'      in request.form \
+#     and 'address1'   in request.form \
+#     and 'address2'   in request.form \
+#     and 'city'       in request.form \
+#     and 'state'      in request.form \
+#     and 'zipcode'    in request.form:
+# =============================================================================
+          # check username exists or not:
+          username = request.form['username']
+
+          query = """
+            SELECT *
+            FROM login
+            WHERE username = %s
+          """
+          cursor = g.conn.execute(query, (username))
+          account = cursor.fetchone()
+          if account:
+            msg = 'Username already exists !'
+          else:
+            # prepared for inserting the new account
+              # for login table
+            password   = request.form['password']
+            email      = request.form['email']
+            security_question = request.form['security_question']
+            answer     = request.form['answer']
+              # for users table
+            first_name = request.form['first_name']
+            last_name  = request.form['last_name']
+            DOB        = request.form['DOB']
+            phone      = request.form['phone']
+            address1   = request.form['address1']
+            address2   = request.form['address2']
+            city       = request.form['city']
+            state      = request.form['state']
+            zipcode    = request.form['zipcode']
+            active     = 'y'
+              # generate user_id
+            id_exists = True
+            while id_exists:
+              new_user_id = str(random.randrange(10**11,10**12-1))
+              query = """
+                SELECT *
+                FROM haslogin
+                WHERE user_id = %s
+              """
+              cursor = g.conn.execute(query, new_user_id)
+              if not cursor.fetchone():
+                id_exists = False
+            user_id = new_user_id
+            
+            query = """
+              INSERT INTO login 
+              VALUES (%s,%s,%s,%s,%s)
+            """
+            g.conn.execute(query, \
+                           (username,email,password,security_question,answer))
+            query = """
+              INSERT INTO users 
+              VALUES (%s,%s,%s,%s,%s,  %s,%s,%s,%s,%s,%s)
+            """
+            g.conn.execute(query, \
+                           (user_id, first_name, last_name, DOB, phone, \
+                            address1, address2, city, state, zipcode, active))
+              
+            # warning: haslogin must be operated as the last table.
+            query = """
+              INSERT INTO haslogin
+              VALUES (%s,%s,NULL)
+            """
+            g.conn.execute(query, \
+                           (username,user_id))
+
+  return render_template("register.html",msg=msg)
 
 
 
@@ -236,6 +371,7 @@ if __name__ == "__main__":
 
     HOST, PORT = host, port
     print("running on %s:%d" % (HOST, PORT))
+    app.secret_key = 'this is a sercret key'
     app.run(host=HOST, port=PORT, debug=debug, threaded=threaded)
 
   run()

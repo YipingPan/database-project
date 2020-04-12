@@ -12,11 +12,40 @@
       <p><a href="/login">LOGIN</a></p>
       <h2>Register a new account.</h2>
       <br>
-      <form action="" method="post">
-        <input type="text" placeholder="Username" name="username" value="{{
-          request.form.username }}">
-         <input type="password" placeholder="Password" name="password" value="{{
-          request.form.password }}">
+      <form action="/register" method="post">
+        <div> username <div>
+        <input type="text" placeholder="New Username" name="username" id="username" maxlength="12" required><br><br>
+         <div> password<div>      
+        <input type="password" placeholder="New Password" name="password"  id="password" maxlength="50" required><br><br>
+        <div> email <div>
+        <input type="email" placeholder="Email" name="email"  id="email" required><br><br>
+        <div> security question <div>
+        <input type="security_question" placeholder="security_question" name="security_question"  id="security_question" maxlength="100" required><br><br>
+        <div> answer <div>
+        <input type="text" placeholder="answer" name="answer"  id="answer" maxlength="100" required><br><br>
+        <div> firstname <div>
+        <input type="text" placeholder="first_name" name="first_name"  id="first_name" maxlength="50" required><br><br>
+        <div> lastname <div>
+        <input type="text" placeholder="last_name" name="last_name"  id="last_name"  maxlength="50" required><br><br>
+        <div> date of birth <div>
+        <input type="date" placeholder="DOB" name="DOB"  id="DOB" max="2019-12-31" min="1900-01-01" required><br><br>
+        <div> phone <div>
+        <input type="tel" placeholder="phone" name="phone"  id="phone" pattern="[0-9]{10}" required><br><br>
+        <div> address1 <div>
+        <input type="text" placeholder="address1" name="address1"  id="address1" maxlength="50" required><br><br>
+        <div> address2 <div>
+        <input type="text" placeholder="address2" name="address2"  id="address2" maxlength="50" required><br><br>
+        <div> city <div>
+        <input type="text" placeholder="city" name="city"  id="city" maxlength="50" required><br><br>
+        <div> state <div>
+        <input type="text" placeholder="state" name="state"  id="state" maxlength="20" required><br><br>
+        <div> zipcode <div>
+        <input type="number" placeholder="zipcode" name="zipcode"  id="zipcode" pattern="[0-9]{5}" min="10000" max="99999" required><br><br>
+       <br>
+       <br>
+        <div class="msg"> {{ msg }} </div>
+       <br>
+       <br>
         <input class="btn btn-default" type="submit" value="Register">
       </form>
     </div>
