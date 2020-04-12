@@ -11,6 +11,22 @@
   <h1>Second-hand Furniture Market</h1>
   <p>Here you can view the all posts. To see more details about a specific post, enter its id at the bottom of the page.</p>
 </div>
+
+<div style="width:1000px;height:300px;line-height:2em;overflow:scroll;padding:5px;">
+<table>
+<thead><tr><th>Post_id</th><th>Post_comment</th></tr></thead>
+<tbody>
+{% for n in posts %}
+    
+<tr><td>{{n}}</td><td>Description1</td></tr>
+{% endfor %}
+</tbody>
+</table>
+    
+</div>
+
+
+
   
 
 

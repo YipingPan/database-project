@@ -163,25 +163,19 @@ def index():
 #
 @app.route('/post')
 def post():
-  query = """	SELECT *
-                FROM post
-              """
-  cursor = g.conn.execute(query)
-  data = cursor.fetchall()
-  print data
+ 
+  cursor = g.conn.execute("SELECT post_id FROM post")
+  posts = []
+  posts = cursor.fetchall()
   cursor.close()
-  return render_template("post.html")
+
+  context = dict(posts=posts)
+
+  return render_template("post.html", **context)
 
 @app.route('/postinfo')
 def postinfo():
-	query = """	SELECT *
-                FROM item
-                WHERE post-id=
-              """
-    cursor = g.conn.execute(query)
-  data = cursor.fetchone()
-  print data
-  cursor.close()
+	
   
   return render_template("postinfo.html")
 

@@ -1,0 +1,17 @@
+Charlene
+
+While doing part 3:
+In Anaconda prompt:
+git pull
+
+git add *
+git commit -m ""
+got push origin master
+
+
+python server.py
+ctrl+c to exit python script
+Open browser and go to localhost:8111
+
+
+
