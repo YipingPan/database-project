@@ -41,7 +41,7 @@
     <div>{{n}}</div>
     {% endfor %}
     {% for n in price%}
-    <div>{{n}}</div>
+    <div>price: $ {{n}}</div>
     {% endfor %}
  </div>
 
@@ -51,6 +51,9 @@
 <p>Enter item_id to add to cart: <input type="text" name="item_id">
 <input type="submit" value="Add to cart"></p>
 </form>
+</div>
+<div>
+{{msg}}
 </div>
 
 <button type=“button”><a href="/cart">VIEW MY CART</a></button>

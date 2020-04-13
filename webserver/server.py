@@ -250,13 +250,29 @@ def add_to_cart():
       WHERE item_id = %s
     """
     cursor = g.conn.execute(query,item_id)
-    newitem = cursor.fetchone()
+    newitem_info1 = cursor.fetchone() #from item
     
+    query = """
+      SELECT post_id, post_comment, post_time, price, state
+      FROM post
+      WHERE post_id in (SELECT post_id FROM containsitem WHERE item_id = %s) 
+    """
+    cursor = g.conn.execute(query,item_id)
+    newitem_info2 = cursor.fetchone() #from post
+    print(newitem_info2['state'])
+    if newitem_info2['state'] != "for sale" :
+      cursor = g.conn.execute("SELECT post_id, post_comment, post_time, price, state FROM post")
+      posts = []
+      posts = cursor.fetchall()
+      cursor.close()
+      context = dict(posts=posts)
+      return render_template('post.html', **context, msg="Please select items 'for sale'")    
+
     #####  following steps are extremely important/strict to revise 'session';
     ##### to use session['itemsarray'], must write like this instead of 'context = dict(items=session['itemsarray'])'
     ##### tuples = [tuple(x.values()) for x in session['itemsarray']]
     ##### context = dict(items=tuples)
-    newitem = dict(newitem) 
+    newitem = {**dict(newitem_info1),**dict(newitem_info2)}
     itemsarray = session['itemsarray']
     itemsarray.append(newitem)
     cursor.close()

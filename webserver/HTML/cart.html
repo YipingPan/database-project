@@ -17,27 +17,30 @@
   <h2>MY CART</h2>
  </div>
 
-<div style="width:1000px;height:100px;line-height:2em;overflow:scroll;padding:5px;">
+<div style="width:1500px;height:100px;line-height:2em;overflow:scroll;padding:5px;">
 <table>
-<thead><tr><th>Item_id</th><th>Name</th><th>Image</th><th>Brand</th><th>Description</th><th>Category</th></tr></thead>
+<thead><tr><th>Item_id</th><th>Image</th><th>Name</th><th>Brand</th><th>Category</th><th>Description</th>
+<th>Post_id</th><th>Post_comment</th><th>Post_time</th><th>Price</th><th>State</th></tr></thead>
 <tbody>
 
-{% for item_id, name, picture_url, brand, description, category in items %}
-<tr><td>{{item_id}}</td><td>{{name}}</td><td>{{picture_url}}</td><td>{{brand}}</td><td>{{description}}</td><td>{{category}}</td></tr>
+{% for item_id, name, picture_url, brand, description, category, post_id, post_comment, post_time, price, state in items %}
+<tr><td>{{brand}}</td><td>{{category}}</td><td>{{description}}</td><td>{{item_id}}</td><td>{{name}}</td><td>{{picture_url}}</td>
+<td>{{post_comment}}</td><td>{{post_id}}</td><td>{{post_time}}</td><td>{{price}}</td><td>{{state}}</td></tr>
 {% endfor %}
 
 </tbody>
 </table>    
 
 </div>
-
 <div>
-{{msg}}
+  {{msg}}
 </div>
+
 
 <div>
  <form method="POST" action="/clear">
  <input type="submit" value="Clear cart"></p>
+
 </div>
 </body>
 <button type=“button”><a href="/pay">PAY NOW</a></button>
