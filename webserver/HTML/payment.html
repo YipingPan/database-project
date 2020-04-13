@@ -12,14 +12,27 @@
 
 <div style="background-color:lightblue">
   <h1>Second-hand Furniture Market</h1>
-  <p>Payment information.</p>
+  <p>Enter your payment information below.</p>
 </div>
-  <button type=“button”><a href="/cart">BACK TO CART</a></button>
-  <button type=“button”><a href="/">BACK TO HOME</a></button>
-
+  
+<form method="POST" action="/pay">
+  <label for="id">Payment_id:</label>
+  <input type="text" name="payment_id"><br><br>
+  <label for="method">Method:</label>
+  <select id="method" name="method">
+  <option value="credit card">Credit Card</option>
+  <option value="debit card">Debit Card</option>
+  <option value="paypal">Paypal</option>
+  <option value="venmo">Venmo</option>
+</select>
+  <label for="account">Account number:</label>
+  <input type="text" name="account"><br><br>
+  <input type="submit" value="Submit payment">
+</form>
 
 
 </body>
 
-
+<button type=“button”><a href="/cart">BACK TO CART</a></button>
+  <button type=“button”><a href="/">BACK TO HOME</a></button>
 </html>

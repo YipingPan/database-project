@@ -209,12 +209,12 @@ def view():
       WHERE post_id = %s
     """
     cursor4 = g.conn.execute(query4, post_id_details)
-    post_info = cursor4.fetchone()
+    price = cursor4.fetchone()
     #print(item_info)
     #print(post_info)
     
     
-    context = dict(posts=posts,item_info=item_info, post_info=post_info)
+    context = dict(posts=posts,item_info=item_info, price=price)
     
     return render_template("post.html", **context)
  

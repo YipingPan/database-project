@@ -13,20 +13,30 @@
   <p>Enter all information about the item you want to sell and click the submit button when done.</p>
 </div>
 
-<form action="/index.html">
+<form method="POST" action="/sell">
   <label for="id">Item-id:</label>
   <input type="text" id="id" name="id"><br><br>
-  <label for="name">Name of item:</label>
-  <input type="text" id="name" name="name"><br><br>
   <label for="image">Image:</label>
   <input type="text" id="image" name="image"><br><br>
+  <label for="name">Name of item:</label>
+  <input type="text" id="name" name="name"><br><br>
+  
   <label for="price">Original Price:</label>
   <input type="number" id="price" name="price"><br><br>
   <label for="price2">Selling Price:</label>
   <input type="number" id="price2" name="price2"><br><br>
-  
+  <label for="brand">Brand:</label>
+  <input type="text" id="brand" name="brand"><br><br>
+  <label for="description">Description:</label>
+  <input type="text" id="description" name="description"><br><br>
+  <label for="year">Year:</label>
+  <input type="text" id="description" name="description"><br><br>
+  <label for="category">Category:</label>
+  <input type="text" id="category" name="category"><br><br>
+
   <input type="submit" value="Submit">
 </form>
+
 
 <p><a href="/">BACK TO HOME</a></p>
 
