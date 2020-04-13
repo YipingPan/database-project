@@ -15,6 +15,7 @@ from sqlalchemy.pool import NullPool
 from flask import Flask, request, render_template, g, redirect, Response \
   , url_for, session
 import random
+import datetime
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'HTML')
 app = Flask(__name__, template_folder=tmpl_dir)
@@ -168,7 +169,7 @@ def post():
     posts = []
     posts = cursor.fetchall()
     cursor.close()
-  
+    
     context = dict(posts=posts)
     return render_template("post.html", **context)
 
@@ -226,9 +227,74 @@ def pay():
     print(e)
     return render_template("payment.html", msg='server error !')
 
-@app.route('/sell')
+@app.route('/sell', methods=['GET','POST'])
 def sell():
   try:
+# =============================================================================
+#     if 'loggedin' not in session:
+#       return render_template('login.html',msg='Please log in !')
+# =============================================================================
+    
+    if request.method=='POST':
+      
+      name = request.form['name'] 
+      picture_url = "default"
+      original_price = request.form['original_price']
+      brand = request.form['brand']
+      description = request.form['description']
+      year_bought = request.form['year_bought']
+      category = request.form['category']
+      
+      currentDT = datetime.datetime.now()
+      post_time = currentDT.strftime("%Y-%m-%d %H:%M:%S")
+      price = request.form['price']
+
+        # generate post_id item_id
+      ids_exists = True
+      while ids_exists:
+        new_post_id = str(random.randrange(10**11,10**12-1))
+        new_item_id = str(random.randrange(10**11,10**12-1))
+        query = """
+          SELECT *
+          FROM containsitem
+          WHERE post_id = %s 
+          AND item_id = %s
+        """
+        cursor = g.conn.execute(query, (new_post_id,new_item_id))
+        if not cursor.fetchone():
+          ids_exists = False
+      cursor.close()
+      post_id = new_post_id
+      item_id = new_item_id
+      
+      query = """
+        INSERT INTO post
+        VALUES (%s,NULL,NULL,%s,%s,%s)
+      """
+      g.conn.execute(query, (post_id,post_time,price,'for sale'))
+      
+      query = """
+        INSERT INTO item
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
+      """
+      
+      g.conn.execute(query, (item_id,name,picture_url, original_price,\
+                             brand,description, year_bought,category)) 
+        
+      query = """
+        INSERT INTO containsitem
+        VALUES (%s,%s)
+      """
+      g.conn.execute(query,(post_id,item_id))
+      
+      sellsarray = session['sellsarray']
+      sellsarray.append({'itemname':name, 'id':post_id})
+      session['sellsarray'] = sellsarray
+      
+      
+      context = {'postid':post_id, 'itemid':item_id,\
+                 'msg':"Successfully posted."}
+      return render_template("sell.html",**context)
     return render_template("sell.html")
   except Exception as e:
     print(e)

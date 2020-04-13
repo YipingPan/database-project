@@ -37,12 +37,15 @@
 
 
 <div>
+    <p>items_id,  name, picture_url,  brand,  description,  category,   price:</p>
     {% for n in item_info%}
-    <div>{{n}}</div>
+    {{n}},  
     {% endfor %}
     {% for n in price%}
-    <div>price: $ {{n}}</div>
+    ${{n}}
     {% endfor %}
+    <br>
+
  </div>
 
 

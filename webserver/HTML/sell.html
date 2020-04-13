@@ -12,31 +12,39 @@
   <h2>Sell my item</h2>
   <p>Enter all information about the item you want to sell and click the submit button when done.</p>
 </div>
-
 <form method="POST" action="/sell">
-  <label for="id">Item-id:</label>
-  <input type="text" id="id" name="id"><br><br>
-  <label for="image">Image:</label>
-  <input type="text" id="image" name="image"><br><br>
   <label for="name">Name of item:</label>
-  <input type="text" id="name" name="name"><br><br>
+  <input type="text" id="name" name="name" placeholder="required" maxlength="30" required><br><br>
+
   
-  <label for="price">Original Price:</label>
-  <input type="number" id="price" name="price"><br><br>
-  <label for="price2">Selling Price:</label>
-  <input type="number" id="price2" name="price2"><br><br>
+  <label for="original_price">Original Price:</label>
+  <input type="number" id="original_price"  name="original_price" ><br><br>
+  
+  <label for="price">Selling Price:</label>
+  <input type="number" id="price" placeholder="required" name="price" required><br><br>
+  
   <label for="brand">Brand:</label>
-  <input type="text" id="brand" name="brand"><br><br>
+  <input type="text" id="brand"  name="brand" maxlength="20"><br><br>
+  
   <label for="description">Description:</label>
-  <input type="text" id="description" name="description"><br><br>
-  <label for="year">Year:</label>
-  <input type="text" id="description" name="description"><br><br>
+  <input type="text" id="description" name="description" maxlength="500" ><br><br>
+  
+  <label for="year">Year Bought:</label>
+  <input type="number" id="description" placeholder="required" name="year_bought" min="1900" max="2020" required><br><br>
+  
   <label for="category">Category:</label>
-  <input type="text" id="category" name="category"><br><br>
+  <input type="text" id="category" placeholder="required" name="category" maxlength="12" required><br><br>
+  
+
 
   <input type="submit" value="Submit">
 </form>
 
+<div>
+<p>{{msg}}</p>
+<p>Post_id is: {{postid}}</p>
+<p>Item_id is: {{itemid}}</p>
+</div>
 
 <p><a href="/">BACK TO HOME</a></p>
 
