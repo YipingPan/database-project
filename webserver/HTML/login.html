@@ -1,23 +1,35 @@
 <html>
   <head>
     <title>Login</title>
-    <style>body{background-color: #99ccff;}</style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="static/bootstrap.min.css" rel="stylesheet" media="screen">
   </head>
+  <style>
+    body{ 
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
   <body>
+    <div style="background-color:lightblue">
+  <h1>Second-hand Furniture Market</h1>
+  <p>Please login to the website to continue.</p>
+  
+
+</div>
+
     <div class="container">
-      <h1>Welcome to Damon and Charlene's website.</h1>
-      <p><a href="/">HOME</a></p>
-      <p><a href="/register">REGISTER</a></p>
-      <h2>Login here</h2>
+      <button type=“button”><a href="/">HOME</a></button>
+      <button type=“button”><a href="/register">REGISTER</a></button>
+      <button type=“button”><a href="/logout">LOGOUT</a></button>
+      <h4>Login here</h4>
       <br>
       <form action="/login" method="post">
         <input type="text" placeholder="Username" name="username" >
         <input type="password" placeholder="Password" name="password">
         <input  type="submit" value="Login">
       </form>
-      <h2>{{msg}}</h2>
+      <h4>{{msg}}</h4>
     </div>
   </body>
 </html>

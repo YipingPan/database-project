@@ -199,13 +199,32 @@ def view():
       WHERE item_id = %s
     """
     cursor3 = g.conn.execute(query3, get_item_id)
+    item_info = []
     item_info = cursor3.fetchone()
-    
-    context = dict(posts=posts,item_info=item_info)
     cursor3.close()
+
+    query4 = """
+      SELECT price
+      FROM post
+      WHERE post_id = %s
+    """
+    cursor4 = g.conn.execute(query4, post_id_details)
+    post_info = cursor4.fetchone()
+    #print(item_info)
+    #print(post_info)
+    
+    
+    context = dict(posts=posts,item_info=item_info, post_info=post_info)
+    
     return render_template("post.html", **context)
  
-
+@app.route('/pay')
+def pay():
+  try:
+    return render_template("payment.html")
+  except Exception as e:
+    print(e)
+    return render_template("payment.html", msg='server error !')
 
 @app.route('/sell')
 def sell():

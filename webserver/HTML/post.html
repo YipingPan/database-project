@@ -1,4 +1,8 @@
 <html>
+<head>
+    <title>Posts</title>
+    
+  </head>
   <style>
     body{ 
       font-size: 15pt;
@@ -31,12 +35,15 @@
 </div>
 
 
+
 <div>
     {% for n in item_info%}
     <div>{{n}}</div>
     {% endfor %}
+    {% for n in post_info%}
+    <div>{{n}}</div>
+    {% endfor %}
  </div>
-
 
 
 <div>
@@ -46,7 +53,10 @@
 </form>
 </div>
 
-<p><a href="/">HOME</a></p>
+<button type=“button”><a href="/cart">VIEW MY CART</a></button>
+<button type=“button”><a href="/">BACK TO HOME</a></button>
+
+
 
 
 
