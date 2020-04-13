@@ -164,40 +164,52 @@ def index():
 @app.route('/post')
 def post():
   try:
-    #cursor = g.conn.execute("SELECT post_id, post_comment, post_time, price, state FROM post")
-    cursor = g.conn.execute("SELECT item_id, name, picture_url, brand, description, category FROM item")
-    items = []
-    items = cursor.fetchall()
-    cursor.close()
-    
-    context = dict(items=items)
-    return render_template("post.html", **context)
-  except Exception as e:
-    print(e) # see error in the prompt
-    return render_template("post.html", msg='server error !')  
-
-@app.route('/postinfo')
-def postinfo():
-  try:
     cursor = g.conn.execute("SELECT post_id, post_comment, post_time, price, state FROM post")
     posts = []
     posts = cursor.fetchall()
     cursor.close()
   
     context = dict(posts=posts)
-    
-    return render_template("postinfo.html", **context)
-  except Exception as e:
-    print(e)
-    return render_template("postinfo.html", msg='server error !') 
+    return render_template("post.html", **context)
 
+  except Exception as e:
+    print(e) # see error in the prompt
+    return render_template("post.html", msg='server error !')  
+
+@app.route('/view', methods=['POST'])
+def view():
+    cursor = g.conn.execute("SELECT post_id, post_comment, post_time, price, state FROM post")
+    posts = []
+    posts = cursor.fetchall()
+    cursor.close()
+  
+    post_id_details = request.form['post_id']
+    query2 = """
+      SELECT item_id
+      FROM containsitem
+      WHERE post_id = %s
+    """
+    cursor2 = g.conn.execute(query2, post_id_details)
+    get_item_id = cursor2.fetchone()
+    cursor2.close()
+
+    query3 = """
+      SELECT item_id, name, picture_url, brand, description, category
+      FROM item
+      WHERE item_id = %s
+    """
+    cursor3 = g.conn.execute(query3, get_item_id)
+    item_info = cursor3.fetchone()
+    
+    context = dict(posts=posts,item_info=item_info)
+    cursor3.close()
+    return render_template("post.html", **context)
+ 
 
 
 @app.route('/sell')
 def sell():
   try:
-    
-    
     return render_template("sell.html")
   except Exception as e:
     print(e)

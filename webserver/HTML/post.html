@@ -9,32 +9,40 @@
 <body>
 <div style="background-color:lightblue">
   <h1>Second-hand Furniture Market</h1>
-  <p>Here you can view the all items that have been posted. To see more details about a specific post, enter its id at the bottom of the page. **Fix cant get inner join to display</p>
-</div>
+  <p>Here you can view the all items that have been posted. To see more details about a specific post, enter its id at the bottom of the page.</p>
 
-<div style="width:1000px;height:300px;line-height:2em;overflow:scroll;padding:5px;">
+</div>
+<div style="width:1000px;height:300px;line-height:2em;overflow:scroll;padding:5px">
 <table>
-<thead><tr><th>Post_id</th><th>Item_id</th><th>Name</th><th>Image</th><th>Brand</th><th>Description</th><th>Category</th></tr></thead>
+<thead><tr><th align="left">Post_id</th><th align="left">Post_comment</th><th align="left">Time_posted</th><th align="left">Price</th><th align="left">State</th></tr></thead>
 <tbody>
-{% for item_id, name, picture_url, brand, description, category in items %}
-    
-<tr><td>Not working</td><td>{{item_id}}</td><td>{{name}}</td><td>{{picture_url}}</td><td>{{brand}}</td><td>{{description}}</td><td>{{category}}</td></tr>
+{% for post_id, comment, time, price, state in posts%}  
+<tr><td width=20%>{{post_id}}</td><td width=20%>{{comment}}</td><td width=30%>{{time}}</td><td width=20%>{{price}}</td><td width=10%>{{state}}</td></tr>
 {% endfor %}
 </tbody>
 </table>
-    
 </div>
 
-
-<form method="POST" action="/postinfo">
-<p>Enter post-id: <input type="text" name="name"> <input type="submit" value="View details"></p>
+<div>
+<form method="POST" action="/view">
+<p>Enter post_id to view details: <input type="text" name="post_id"> 
+<input type="submit" value="View details"></p>
 </form>
+</div>
+
+<table>
+<tbody>
+	{{item_info}}
+
+</tbody>
+</table>
+</div>
 
 <div>
-
 <form method="POST" action="/add">
-item_id  <input type="text" name="item_id">
+<p>Enter item_id to add to cart: <input type="text" name="item_id">
 <input type="submit" value="Add to cart"></p>
+</form>
 </div>
 
 <p><a href="/">HOME</a></p>

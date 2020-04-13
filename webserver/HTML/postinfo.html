@@ -21,6 +21,16 @@
 </tbody>
 </table>
 
+<table>
+<thead><th>Item_id</th><th>Name</th><th>Image</th><th>Brand</th><th>Description</th><th>Category</th></tr></thead>
+<tbody>
+{% for item_id, name, picture_url, brand, description, category in items %}
+    
+<tr><td>{{item_id}}</td><td>{{name}}</td><td>{{picture_url}}</td><td>{{brand}}</td><td>{{description}}</td><td>{{category}}</td></tr>
+
+{% endfor %}
+</tbody>
+</table>
 
   <form method="POST" action="/cart">
 <p><input type="submit" value="Add to cart"></p>
