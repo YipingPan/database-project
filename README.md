@@ -1,6 +1,7 @@
 # database-project
+Author: YipingPan, Charlene Lau
 PostgreSQL account: yp2524
-PW:  
+PW:  HIDED
 
 ## URL of web application: http://35.196.55.58:8111/
 
