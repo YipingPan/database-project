@@ -3,7 +3,7 @@ Author: YipingPan, Charlene Lau
 PostgreSQL account: yp2524
 PW:  HIDED
 
-## URL of web application: http://35.196.55.58:8111/
+## URL of web application: http://35.196.55.58:8111/ (currently virtual machine is stopped)
 
 A Second-hand furniture market was created. Users are able to login, register, or log out if already logged in.
 Users, once logged-in are able to view their profile pages, view posts, add items to cart and sell items.
